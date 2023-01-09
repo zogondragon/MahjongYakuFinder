@@ -127,3 +127,8 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# gVim backup and swap files
+*~
+*.swp
+*.swo
