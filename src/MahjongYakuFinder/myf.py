@@ -6,7 +6,7 @@ OrderOfCounts = ["1m", "2m", "3m", "4m", "5m", "6m", "7m", "8m", "9m",
 class HandNotationConverter:
     """This class converts between human readable text notation and
     machine readable count notation."""
-    def ConvertTextToSetNotation(textNotationStr):
+    def ConvertTextToSetNotation(self, textNotationStr):
         # The text notation should be sorted (m) -> (s) -> (p) -> (ESWNBGR) order.
         if self.VerifyTextNotation(textNotationStr) == False:
             print("Given hand is not well-ordered.")
@@ -19,13 +19,13 @@ class HandNotationConverter:
 
         # is East South West North Blank Green Red tile exist?
 
+        return "DUMMY RETURN"
+
+    def ConvertSetToTextNotation(self, setNotationStr):
         pass
 
-    def ConvertSetToTextNotation(setNotationStr):
+    def VerifyTextNotation(self, textNotationStr):
         pass
-
-    def VerifyTextNotation(textNotationStr):
-
 
 class Hand:
     """Every mahjong hand can be regarded as unordered sets. Every tile of
