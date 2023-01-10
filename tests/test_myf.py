@@ -1,7 +1,7 @@
 import unittest
 from src.MahjongYakuFinder import myf
 
-class TestHandNotationConverter(unittest.TestCase):
+class TestHandAndYaku(unittest.TestCase):
     def setUp(self):
         self.hnc = myf.HandNotationConverter()
 
@@ -87,6 +87,32 @@ class TestHandNotationConverter(unittest.TestCase):
         self.assertEqual(self.hnc.VerifyTextNotation("2478m11155m899mESSR"), False)  # Multiple Man tiles
         self.assertEqual(self.hnc.VerifyTextNotation("2478s11155s899sESSR"), False)  # Multiple Sak tiles
         self.assertEqual(self.hnc.VerifyTextNotation("2478s11155p899pESSR"), False)  # Multiple Ping tiles
-            
+
+    def test_YakuKokushimusou(self):
+        yaku = myf.YakuKokushimusou()
+        hands = []
+        hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("119m19s19pESWNBGR")))
+        hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("199m19s19pESWNBGR")))
+        hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("19m119s19pESWNBGR")))
+        hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("19m199s19pESWNBGR")))
+        hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("19m19s119pESWNBGR")))
+        hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("19m19s199pESWNBGR")))
+        hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("19m19s19pEESWNBGR")))
+        hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("19m19s19pESSWNBGR")))
+        hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("19m19s19pESWWNBGR")))
+        hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("19m19s19pESWNNBGR")))
+        hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("19m19s19pESWNBBGR")))
+        hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("19m19s19pESWNBGGR")))
+        hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("19m19s19pESWNBGRR")))
+        for hand in hands:
+            self.assertEqual(yaku.CheckHand(hand), True)
+        invalid_hands = []
+        invalid_hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("111m19s19pESWNBGR")))
+        invalid_hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("789m19s19pESWNBGR")))
+        invalid_hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("19s19pEESSWWNBGR")))
+        invalid_hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("456m456s456pBBBGG")))
+        for hand in invalid_hands:
+            self.assertEqual(yaku.CheckHand(hand), False)
+
 if __name__ == '__main__':
     unittest.main()
