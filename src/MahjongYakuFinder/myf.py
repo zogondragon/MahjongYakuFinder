@@ -13,15 +13,55 @@ class HandNotationConverter:
         if self.VerifyTextNotation(textNotationStr) == False:
             print("Given hand is not a proper hand.")
             return None
-        # is Man tile exist?
+        # Run the RE.match() function to get all match groups.
+        pattern = re.compile("([1-9]*m)?([1-9]*s)?([1-9]*p)?([ESWNBGR]*)?")
+        matchObj = pattern.match(textNotationStr)
+        resultList = [0 for i in range(34)]     # [0, 0, 0, ......, 0] length is 34
 
-        # is Sak tile exist?
-
-        # is Ping tile exist?
-
-        # is East South West North Blank Green Red tile exist?
-
-        return "DUMMY RETURN"
+        # Is Man tile exist?
+        if matchObj.group(1) is not None:
+            for v in matchObj.group(1):
+                if v >= '1' and v <= '9':
+                    resultList[0 + int(v) - 1] += 1 
+        # Is Sak tile exist?
+        if matchObj.group(2) is not None:
+            for v in matchObj.group(2):
+                if v >= '1' and v <= '9':
+                    resultList[9 + int(v) - 1] += 1 
+        # Is Ping tile exist?
+        if matchObj.group(3) is not None:
+            for v in matchObj.group(3):
+                if v >= '1' and v <= '9':
+                    resultList[18 + int(v) - 1] += 1 
+        # Is East South West North Blank Green Red tile exist?
+        if matchObj.group(4) is not None:
+            for v in matchObj.group(4):
+                if v == 'E':
+                    resultList[27] += 1
+                elif v == 'S':
+                    resultList[28] += 1
+                elif v == 'W':
+                    resultList[29] += 1
+                elif v == 'N':
+                    resultList[30] += 1
+                elif v == 'B':
+                    resultList[31] += 1
+                elif v == 'G':
+                    resultList[32] += 1
+                elif v == 'R':
+                    resultList[33] += 1
+                else:
+                    raise ValueError
+        
+        # Check the result list and return it as a string.
+        if sum(resultList) != 14:
+            print("Given hand is not a 14-tile hand.")
+            return None
+        if len(list(filter(lambda x: x < 0 or x > 4, resultList))) > 0 :
+            print("Given hand contains invalid number of tiles.")
+            return None
+        resultStr = ''.join(["%1d" % x for x in resultList])
+        return resultStr
 
     def ConvertSetToTextNotation(self, setNotationStr):
         pass
