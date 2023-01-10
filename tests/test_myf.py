@@ -19,6 +19,10 @@ class TestHandNotationConverter(unittest.TestCase):
             "0000000000000000003333200000000000")
         self.assertEqual(self.hnc.ConvertTextToSetNotation("2478m111s899pESSR"), 
             "0101001103000000000000000121200001")
+        self.assertEqual(self.hnc.ConvertTextToSetNotation("19m19s19pESWNBGGR"), 
+            "1000000011000000011000000011111121")
+        self.assertEqual(self.hnc.ConvertTextToSetNotation("114477m2266sEENN"), 
+            "2002002000200020000000000002002000")
         self.assertEqual(self.hnc.ConvertTextToSetNotation(""), None)
         self.assertEqual(self.hnc.ConvertTextToSetNotation("slIGho328jhs@$!"), None)
         self.assertEqual(self.hnc.ConvertTextToSetNotation("111112222233333m"), None)
@@ -33,8 +37,33 @@ class TestHandNotationConverter(unittest.TestCase):
         self.assertEqual(self.hnc.ConvertTextToSetNotation("2478s11155s899sESSR"), None)
         self.assertEqual(self.hnc.ConvertTextToSetNotation("2478s11155p899pESSR"), None)
 
+    def test_ConvertSetToTextNotation(self):
+        self.assertEqual(self.hnc.ConvertSetToTextNotation("1110000001110000001110000003200000"), 
+            "123m123s123pEEESS")
+        self.assertEqual(self.hnc.ConvertSetToTextNotation("3333200000000000000000000000000000"), 
+            "11122233344455m")
+        self.assertEqual(self.hnc.ConvertSetToTextNotation("0000000003333200000000000000000000"), 
+            "11122233344455s")
+        self.assertEqual(self.hnc.ConvertSetToTextNotation("0000000000000000003333200000000000"), 
+            "11122233344455p")
+        self.assertEqual(self.hnc.ConvertSetToTextNotation("0101001103000000000000000121200001"), 
+            "2478m111s899pESSR")
+        self.assertEqual(self.hnc.ConvertSetToTextNotation("1000000011000000011000000011111121"), 
+            "19m19s19pESWNBGGR")
+        self.assertEqual(self.hnc.ConvertSetToTextNotation("2002002000200020000000000002002000"), 
+            "114477m2266sEENN")
+        self.assertEqual(self.hnc.ConvertSetToTextNotation("3002002000200020000000000002002000"), 
+            None)       # 15-tile hand
+        self.assertEqual(self.hnc.ConvertSetToTextNotation("1002002000200020000000000002002000"), 
+            None)       # 13-tile hand
+        self.assertEqual(self.hnc.ConvertSetToTextNotation("20020020002000200000000000020020002"), 
+            None)       # Invalid set notation
+        self.assertEqual(self.hnc.ConvertSetToTextNotation("200200200020002000000000000200200"), 
+            None)       # Invalid set notation
+
     def test_VerifyTextNotation(self):
         self.assertEqual(self.hnc.VerifyTextNotation(""), False)                     # Empty string
+        self.assertEqual(self.hnc.VerifyTextNotation("slIGho37728jhs@$!"), False)    # Gibberish string
         self.assertEqual(self.hnc.VerifyTextNotation("slIGho328jhs@$!"), False)      # Gibberish string
         self.assertEqual(self.hnc.VerifyTextNotation("123m123s123pEEESS"), True)     # Good hand
         self.assertEqual(self.hnc.VerifyTextNotation("11122233344455m"), True)       # Good hand

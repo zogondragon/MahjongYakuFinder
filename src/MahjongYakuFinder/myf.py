@@ -64,12 +64,63 @@ class HandNotationConverter:
         return resultStr
 
     def ConvertSetToTextNotation(self, setNotationStr):
-        pass
+        manTileExist = False
+        sakTileExist = False
+        pingTileExist = False
+        manStrList = []
+        sakStrList = []
+        pingStrList = []
+        honorStrList = []
+        resultStrList = []
+
+        if len(setNotationStr) != 34:
+            print("Given set notation length is not 34.")
+            return None
+        for i, v in enumerate(setNotationStr):
+            if i >= 0 and i < 9 and int(v) > 0:
+                manTileExist = True
+                manStrList.append(str(i+1) * int(v))
+            elif i >= 9 and i < 18 and int(v) > 0:
+                sakTileExist = True
+                sakStrList.append(str(i-8) * int(v))
+            elif i >= 18 and i < 27 and int(v) >0:
+                pingTileExist = True
+                pingStrList.append(str(i-17) * int(v))
+            elif i == 27 and int(v) > 0:
+                honorStrList.append(str('E' * int(v)))
+            elif i == 28 and int(v) > 0:
+                honorStrList.append(str('S' * int(v)))
+            elif i == 29 and int(v) > 0:
+                honorStrList.append(str('W' * int(v)))
+            elif i == 30 and int(v) > 0:
+                honorStrList.append(str('N' * int(v)))
+            elif i == 31 and int(v) > 0:
+                honorStrList.append(str('B' * int(v)))
+            elif i == 32 and int(v) > 0:
+                honorStrList.append(str('G' * int(v)))
+            elif i == 33 and int(v) > 0:
+                honorStrList.append(str('R' * int(v)))
+            elif i >= 34:
+                print("Given set notation is not a proper notation.")
+                return None
+        
+        if manTileExist == True:
+            resultStrList.append(''.join(manStrList) + "m")
+        if sakTileExist == True:
+            resultStrList.append(''.join(sakStrList) + "s")
+        if pingTileExist == True:
+            resultStrList.append(''.join(pingStrList) + "p")
+        resultStrList.append(''.join(honorStrList))
+        resultStr = ''.join(resultStrList)
+        if self.VerifyTextNotation(resultStr) == False:
+            print("Given hand is not a proper hand.")
+            return None
+        return resultStr
 
     def VerifyTextNotation(self, textNotationStr):
         # Check if not allowed character is present in the input string.
         errorpattern = re.compile("[^1-9mspESWNBGR]")
-        if errorpattern.match(textNotationStr) is not None:
+        if errorpattern.search(textNotationStr) is not None:
             return False
 
         # Check if the input string contains more or less than 14 tiles.
