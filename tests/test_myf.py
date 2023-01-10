@@ -60,6 +60,12 @@ class TestHandNotationConverter(unittest.TestCase):
             None)       # Invalid set notation
         self.assertEqual(self.hnc.ConvertSetToTextNotation("200200200020002000000000000200200"), 
             None)       # Invalid set notation
+        self.assertEqual(self.hnc.ConvertSetToTextNotation(""), 
+            None)       # Empty set notation
+        self.assertEqual(self.hnc.ConvertSetToTextNotation("aowegihwaoegihweglwjgweoigh!(*^@123"), 
+            None)       # Gibberish set notation
+        self.assertEqual(self.hnc.ConvertSetToTextNotation("aowegihwaogihweglwjgweoigh!(*^@123"), 
+            None)       # Gibberish set notation
 
     def test_VerifyTextNotation(self):
         self.assertEqual(self.hnc.VerifyTextNotation(""), False)                     # Empty string

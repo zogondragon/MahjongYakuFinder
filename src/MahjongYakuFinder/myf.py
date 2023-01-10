@@ -76,6 +76,9 @@ class HandNotationConverter:
         if len(setNotationStr) != 34:
             print("Given set notation length is not 34.")
             return None
+        if setNotationStr.isnumeric() == False:
+            print("Given set notation contains non-numeric character.")
+            return None
         for i, v in enumerate(setNotationStr):
             if i >= 0 and i < 9 and int(v) > 0:
                 manTileExist = True
