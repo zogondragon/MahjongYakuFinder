@@ -1,3 +1,5 @@
+import collections
+import copy
 import re
 
 OrderOfCounts = ["1m", "2m", "3m", "4m", "5m", "6m", "7m", "8m", "9m",
@@ -9,6 +11,11 @@ TileIndexDict = {"1m": 0, "2m": 1, "3m": 2, "4m": 3, "5m": 4, "6m": 5, "7m": 6, 
     "1s": 9, "2s": 10, "3s": 11, "4s": 12, "5s": 13, "6s": 14, "7s": 15, "8s": 16, "9s": 17,
     "1p": 18, "2p": 19, "3p": 20, "4p": 21, "5p": 22, "6p": 23, "7p": 24, "8p": 25, "9p": 26,
     "E": 27, "S": 28, "W": 29, "N": 30, "B": 31, "G": 32, "R": 33}
+
+TileGroupCursor = [(1, "man"), (2, "man"), (3, "man"), (4, "man"), (5, "man"), (6, "man"), (7, "man"), (8, "man"), (9, "man"),
+    (1, "sak"), (2, "sak"), (3, "sak"), (4, "sak"), (5, "sak"), (6, "sak"), (7, "sak"), (8, "sak"), (9, "sak"),
+    (1, "ping"), (2, "ping"), (3, "ping"), (4, "ping"), (5, "ping"), (6, "ping"), (7, "ping"), (8, "ping"), (9, "ping"),
+    (0, "E"), (0, "S"), (0, "W"), (0, "N"), (0, "B"), (0, "G"), (0, "R")]
 
 def TextToTileSetNotation(textNotationStr):
     """This function is not confined to 14-tile hand. It can convert any length of tile set."""
@@ -219,6 +226,12 @@ class Hand:
         if sum(self.tileCounts) != 14:
             print("Given set notation is not 14-tile hand.")
             raise ValueError
+        
+        # There can be multiple tilegroup interpretations of a given hand, differing Han numbers.
+        # Syuntsu is always notated by the starting number. Ex: 123m = 1 m syuntsu, 789p = 7 p syuntsu.
+        self.tileGroups = []    # ex: a tileGroup = [ (1, "man", "syuntsu"), (3, "sak", "kotsu"), 
+                                # (5, "man", "kotsu"), (6, "ping", "syuntsu"), (0, "E", "toitsu") ] 
+        self.FindTileGroups()       # Find and set above variables.
 
     def ContainsTiles(self, setNotationStr):
         """It returns True when the hand contains given tile set, False when the hand doesn't contain
@@ -240,12 +253,85 @@ class Hand:
         """It returns True when the hand doesn't contain any one of given tile set."""
         pass
 
+    def FindTileGroups(self):
+        """It finds all 4 mentsu (both syuntsu and kotsu) and 1 toitsu and remember those."""
+        # Use backtracking pattern to solve this Constraint Satisfaction Problem.                                
+        # Ref: [1] https://en.wikipedia.org/wiki/Backtracking
+        #      [2] https://en.wikipedia.org/wiki/Constraint_satisfaction_problem
+        # Making difficulty is kotsu > toitsu > syuntsu order, thus find tileGroups in this order.
+        cursor = 0
+        remainingTileset = copy.deepcopy(self.tileCounts)
+        self.BacktrackHelperFindTileGroups(cursor, len(remainingTileset), remainingTileset, [])
+
+    def BacktrackHelperFindTileGroups(self, cursor, end, remainingTileset, tileGroup):
+        if sum(remainingTileset) == 0:
+            # All tiles visited.
+            dc_tileGroup = copy.deepcopy(tileGroup)
+            if self.BacktrackHelperVerifyTileGroup(dc_tileGroup) == True:
+                # If found temporary solution is verified, then add it to the solutions list.
+                # But, do not register duplicated solution.
+                isDuplicatedSolution = False
+                for solution in self.tileGroups:
+                    if collections.Counter(solution) == collections.Counter(dc_tileGroup):
+                        isDuplicatedSolution = True
+                
+                if isDuplicatedSolution == False:
+                    self.tileGroups.append(dc_tileGroup)
+                return
+        if cursor == end:
+            return
+        if remainingTileset[cursor] == 0:
+            self.BacktrackHelperFindTileGroups(cursor+1, end, remainingTileset, tileGroup)
+        if remainingTileset[cursor] >= 3:
+            # Is this cursor imply a kotsu?
+            dc_remainingTileset = copy.deepcopy(remainingTileset)
+            dc_tileGroup = copy.deepcopy(tileGroup)
+            tileSubgroup = TileGroupCursor[cursor]
+            dc_tileGroup.append((tileSubgroup[0], tileSubgroup[1], "kotsu"))
+            dc_remainingTileset[cursor] -= 3
+            self.BacktrackHelperFindTileGroups(cursor, end, dc_remainingTileset, dc_tileGroup)
+        if remainingTileset[cursor] >= 2:
+            # Is this cursor imply a toitsu?
+            dc_remainingTileset = copy.deepcopy(remainingTileset)
+            dc_tileGroup = copy.deepcopy(tileGroup)
+            tileSubgroup = TileGroupCursor[cursor]
+            dc_tileGroup.append((tileSubgroup[0], tileSubgroup[1], "toitsu"))
+            dc_remainingTileset[cursor] -= 2
+            self.BacktrackHelperFindTileGroups(cursor, end, dc_remainingTileset, dc_tileGroup)
+        if remainingTileset[cursor] >= 1: 
+            # Is this cursor imply a syuntsu?
+            tileSubgroup = TileGroupCursor[cursor]
+            if tileSubgroup[0] >= 1 and tileSubgroup[0] <= 7 and\
+               remainingTileset[cursor+1] >= 1 and remainingTileset[cursor+2] >= 1:
+                dc_remainingTileset = copy.deepcopy(remainingTileset)
+                dc_tileGroup = copy.deepcopy(tileGroup)
+                dc_tileGroup.append((tileSubgroup[0], tileSubgroup[1], "syuntsu"))
+                dc_remainingTileset[cursor] -= 1
+                dc_remainingTileset[cursor+1] -= 1
+                dc_remainingTileset[cursor+2] -= 1
+                self.BacktrackHelperFindTileGroups(cursor, end, dc_remainingTileset, dc_tileGroup)
+
+    def BacktrackHelperVerifyTileGroup(self, tileGroup):
+        mentsuCount = 0
+        toitsuCount = 0
+        if len(tileGroup) != 5:
+            return False
+        for v in tileGroup:
+            if v[2] == "syuntsu" or v[2] == "kotsu":
+                mentsuCount += 1
+            elif v[2] == "toitsu":
+                toitsuCount += 1
+        return True if mentsuCount == 4 and toitsuCount == 1 else False
+
+
 class AgariConditionBaseClass:
     pass
 
 class YakuBaseClass:
     def __init__(self):
         self.han = 0
+        self.isYakuman = False
+        self.isHoraPossible = False
     def CheckHand(self, hand):
         pass
 
@@ -253,7 +339,27 @@ class YakuKokushimusou(YakuBaseClass):
     def __init__(self):
         self.han = 13
         self.isYakuman = True
+        self.isHoraPossible = True  # Kokushimusou hand can agari(=hora) itself.
     
     def CheckHand(self, hand):
         condition = TextToTileSetNotation("19m19s19pESWNBGR")   # 13 tile condition
         return hand.ContainsTiles(condition)
+
+class YakuChiitoitsu(YakuBaseClass):
+    def __init__(self):
+        self.han = 2
+        self.isHoraPossible = True  # Chiitoitsu hand can agari(=hora) itself.
+
+    def CheckHand(self, hand):
+        return True if len(list(filter(lambda x: x == 2, hand.tileCounts))) == 7\
+                    else False
+
+class YakuStandardHand(YakuBaseClass):
+    def __init__(self):
+        self.han = 0
+        self.isHoraPossible = True  # Standard hand (4 tile groups plus 1 toitsu pattern) can agari, 
+                                    # but only with additional Han. 0-Han hand cannot agari without riichi.
+
+    def CheckHand(self, hand):
+        return True if len(hand.kotsuList) + len(hand.syuntsuList) == 4 and len(hand.toitsuList) == 1\
+                    else False

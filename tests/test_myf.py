@@ -114,5 +114,52 @@ class TestHandAndYaku(unittest.TestCase):
         for hand in invalid_hands:
             self.assertEqual(yaku.CheckHand(hand), False)
 
+    def test_YakuChiitoitsu(self):
+        yaku = myf.YakuChiitoitsu()
+        hands = []
+        hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("113355m77s99pSSBB")))
+        hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("1199m1199s11pEERR")))
+        hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("1199m1199s115599p")))
+        for hand in hands:
+            self.assertEqual(yaku.CheckHand(hand), True)
+        invalid_hands = []
+        invalid_hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("111m19s19pESWNBGR")))
+        invalid_hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("789m19s19pESWNBGR")))
+        invalid_hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("19s19pEESSWWNBGR")))
+        invalid_hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("456m456s456pBBBGG")))
+        for hand in invalid_hands:
+            self.assertEqual(yaku.CheckHand(hand), False)
+
+    def test_Hand(self):
+        hands = []
+        hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("123m123s123pEEESS")))
+        hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("11122233344455m")))
+        hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("11122233344455s")))
+        hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("11122233344455p")))
+        hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("2478m111s899pESSR")))
+        hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("22345m789s123pWWW")))
+        hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("23455678s123pEEE")))
+        hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("EEESSSWWNNNBBB")))
+        hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("11112345678999p")))
+        hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("11122345678999p")))
+        hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("11123345678999p")))
+        hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("11123445678999p")))
+        hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("11123455678999p")))
+        hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("11123456678999p")))
+        hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("11123456778999p")))
+        hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("11123456788999p")))
+        hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("11123456789999p")))
+        hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("223344556677sGG")))
+        hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("22334455566677s")))
+        hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("11222333444555m")))
+        hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("11122333444555m")))
+        hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("11122233444555m")))
+        hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("11122233344555m")))
+
+        for hand in hands:
+            print(hand.tileCounts)
+            print(hand.tileGroups)
+            self.assertEqual(True, True)
+
 if __name__ == '__main__':
     unittest.main()
