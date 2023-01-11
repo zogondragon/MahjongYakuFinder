@@ -136,7 +136,6 @@ class TestHandAndYaku(unittest.TestCase):
         hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("11122233344455m")))
         hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("11122233344455s")))
         hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("11122233344455p")))
-        hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("2478m111s899pESSR")))
         hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("22345m789s123pWWW")))
         hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("23455678s123pEEE")))
         hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("EEESSSWWNNNBBB")))
@@ -155,11 +154,21 @@ class TestHandAndYaku(unittest.TestCase):
         hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("11122333444555m")))
         hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("11122233444555m")))
         hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("11122233344555m")))
-
+        hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("55556666777788s")))
+        hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("22233344567888s")))
         for hand in hands:
             print(hand.tileCounts)
             print(hand.tileGroups)
-            self.assertEqual(True, True)
+            self.assertNotEqual(len(hand.tileGroups), 0)
+
+        horaImpossibleHands = []
+        horaImpossibleHands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("2478m111s899pESSR")))
+        horaImpossibleHands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("EEESSSWWNBGRRR")))
+        for hand in horaImpossibleHands:
+            print(hand.tileCounts)
+            print(hand.tileGroups)
+            self.assertEqual(len(hand.tileGroups), 0)
+
 
 if __name__ == '__main__':
     unittest.main()
