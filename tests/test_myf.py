@@ -130,6 +130,25 @@ class TestHandAndYaku(unittest.TestCase):
         for hand in invalid_hands:
             self.assertEqual(yaku.CheckHand(hand), False)
 
+    def test_YakuSuuankou(self):
+        yaku = myf.YakuSuuankou()
+        hands = []
+        hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("333m555777s44488p")))
+        hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("111m777999s11188p")))
+        hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("555m666sEEEBBBGG")))
+        for hand in hands:
+            self.assertEqual(yaku.CheckHand(hand), True)
+        invalid_hands = []
+        invalid_hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("111m19s19pESWNBGR")))
+        invalid_hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("789m19s19pESWNBGR")))
+        invalid_hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("19s19pEESSWWNBGR")))
+        invalid_hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("456m456s456pBBBGG")))
+        invalid_hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("333m555789s44488p")))
+        invalid_hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("345m123456s444pNN")))
+        invalid_hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("123m123s123pEERRR")))
+        for hand in invalid_hands:
+            self.assertEqual(yaku.CheckHand(hand), False)
+
     def test_Hand(self):
         hands = []
         hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("123m123s123pEEESS")))

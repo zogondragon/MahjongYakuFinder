@@ -340,7 +340,6 @@ class YakuKokushimusou(YakuBaseClass):
         self.han = 13
         self.isYakuman = True
         self.isHoraPossible = True  # Kokushimusou hand can agari(=hora) itself.
-    
     def CheckHand(self, hand):
         condition = TextToTileSetNotation("19m19s19pESWNBGR")   # 13 tile condition
         return hand.ContainsTiles(condition)
@@ -349,17 +348,28 @@ class YakuChiitoitsu(YakuBaseClass):
     def __init__(self):
         self.han = 2
         self.isHoraPossible = True  # Chiitoitsu hand can agari(=hora) itself.
-
     def CheckHand(self, hand):
         return True if len(list(filter(lambda x: x == 2, hand.tileCounts))) == 7\
                     else False
 
-class YakuStandardHand(YakuBaseClass):
+class YakuSuuankou(YakuBaseClass):
     def __init__(self):
-        self.han = 0
-        self.isHoraPossible = True  # Standard hand (4 tile groups plus 1 toitsu pattern) can agari, 
-                                    # but only with additional Han. 0-Han hand cannot agari without riichi.
-
+        self.han = 13
+        self.isYakuman = True
     def CheckHand(self, hand):
-        return True if len(hand.kotsuList) + len(hand.syuntsuList) == 4 and len(hand.toitsuList) == 1\
-                    else False
+        if len(hand.tileGroups) == 0:
+            self.isHoraPossible = False
+            return False
+        else:
+            for solution in hand.tileGroups:
+                # TODO: Currently, it is returning True if only one of tileGroups satisfy.
+                #       Later, the decision for each tileGroup might be needed.
+                kotsuCount = 0
+                for v in solution:
+                    # TODO: Ankou or Minkou decision -- later. I have to implement
+                    #       Chi, Pon, Kan first.
+                    if v[2] == "kotsu":
+                        kotsuCount += 1
+                if kotsuCount == 4:
+                    return True
+            return False
