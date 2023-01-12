@@ -146,6 +146,30 @@ class TestHandAndYaku(unittest.TestCase):
         invalid_hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("333m555789s44488p")))
         invalid_hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("345m123456s444pNN")))
         invalid_hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("123m123s123pEERRR")))
+        invalid_hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("333m555777s44489p")))
+        for hand in invalid_hands:
+            self.assertEqual(yaku.CheckHand(hand), False)
+
+    def test_YakuDaisangen(self):
+        yaku = myf.YakuDaisangen()
+        hands = []
+        hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("333m55sBBBGGGRRR")))
+        hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("567s88pBBBGGGRRR")))
+        hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("66m789pBBBGGGRRR")))
+        for hand in hands:
+            self.assertEqual(yaku.CheckHand(hand), True)
+        invalid_hands = []
+        invalid_hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("111m19s19pESWNBGR")))
+        invalid_hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("789m19s19pESWNBGR")))
+        invalid_hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("19s19pEESSWWNBGR")))
+        invalid_hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("456m456s456pBBBGG")))
+        invalid_hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("333m555789s44488p")))
+        invalid_hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("345m123456s444pNN")))
+        invalid_hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("123m123s123pEERRR")))
+        invalid_hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("333m555777s44489p")))
+        invalid_hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("119m19s19pESWNBGR")))
+        invalid_hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("113355m77s99pSSBB")))
+        invalid_hands.append(myf.Hand(self.hnc.ConvertTextToSetNotation("333m555777s44488p")))
         for hand in invalid_hands:
             self.assertEqual(yaku.CheckHand(hand), False)
 

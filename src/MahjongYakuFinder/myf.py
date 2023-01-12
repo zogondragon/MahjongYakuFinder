@@ -329,36 +329,44 @@ class AgariConditionBaseClass:
 
 class YakuBaseClass:
     def __init__(self):
-        self.han = 0
+        self.menzenHan = 0
+        self.menzenHoraPossible = False
+        self.nakiHan = 0
+        self.nakiHoraPossible = False
         self.isYakuman = False
-        self.isHoraPossible = False
     def CheckHand(self, hand):
         pass
 
 class YakuKokushimusou(YakuBaseClass):
     def __init__(self):
-        self.han = 13
+        self.menzenHan = 13
+        self.menzenHoraPossible = True  # Kokushimusou hand can agari(=hora) itself.
+        self.nakiHan = 0
+        self.nakiHoraPossible = False   # Kokushi is closed only yaku.
         self.isYakuman = True
-        self.isHoraPossible = True  # Kokushimusou hand can agari(=hora) itself.
     def CheckHand(self, hand):
         condition = TextToTileSetNotation("19m19s19pESWNBGR")   # 13 tile condition
         return hand.ContainsTiles(condition)
 
 class YakuChiitoitsu(YakuBaseClass):
     def __init__(self):
-        self.han = 2
-        self.isHoraPossible = True  # Chiitoitsu hand can agari(=hora) itself.
+        self.menzenHan = 2
+        self.menzenHoraPossible = True  # Chiitoitsu hand can agari(=hora) itself.
+        self.nakiHan = 0
+        self.nakiHoraPossible = False   # Chiitoitsu is closed only yaku.
     def CheckHand(self, hand):
         return True if len(list(filter(lambda x: x == 2, hand.tileCounts))) == 7\
                     else False
 
 class YakuSuuankou(YakuBaseClass):
     def __init__(self):
-        self.han = 13
+        self.menzenHan = 13
+        self.menzenHoraPossible = True
+        self.nakiHan = 0
+        self.nakiHoraPossible = False   # Suuankou is closed only yaku.
         self.isYakuman = True
     def CheckHand(self, hand):
         if len(hand.tileGroups) == 0:
-            self.isHoraPossible = False
             return False
         else:
             for solution in hand.tileGroups:
@@ -371,5 +379,25 @@ class YakuSuuankou(YakuBaseClass):
                     if v[2] == "kotsu":
                         kotsuCount += 1
                 if kotsuCount == 4:
+                    return True
+            return False
+
+class YakuDaisangen(YakuBaseClass):
+    def __init__(self):
+        self.menzenHan = 13
+        self.menzenHoraPossible = True
+        self.nakiHan = 13
+        self.nakiHoraPossible = True
+        self.isYakuman = True
+    def CheckHand(self, hand):
+        if len(hand.tileGroups) == 0:
+            return False
+        else:
+            for solution in hand.tileGroups:
+                dragonKotsuCount = 0
+                for v in solution:
+                    if (v[1] == "B" or v[1] == "G" or v[1] == "R") and v[2] == "kotsu":
+                        dragonKotsuCount += 1
+                if dragonKotsuCount == 3:
                     return True
             return False
